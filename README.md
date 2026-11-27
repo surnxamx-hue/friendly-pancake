@@ -63,3 +63,4 @@ npx electron-builder --win portable --x64
 | `npm run dist:linux` | Build Linux AppImage |
 
 Enjoy!
+# friendly-pancake
