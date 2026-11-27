@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-electron/
+release/
+*.log
+.DS_Store
+.env
+.env.*
+*.exe
+*.AppImage
+*.dmg
+*.blockmap
+*.yml
+!package.json
+.vscode/
+.idea/
