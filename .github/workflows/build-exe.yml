@@ -30,8 +30,6 @@ jobs:
 
       - name: Build Windows EXE (portable + installer)
         run: npx electron-builder --win --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: List release files
         run: dir release
@@ -67,8 +65,6 @@ jobs:
 
       - name: Build Linux AppImage
         run: npx electron-builder --linux AppImage
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
