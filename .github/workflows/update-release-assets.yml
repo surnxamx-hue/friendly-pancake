@@ -1,0 +1,120 @@
+name: Update v1.0.0 Release Assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-release-assets.yml'
+
+concurrency:
+  group: update-v1-release-assets
+  cancel-in-progress: false
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
+      - name: Build renderer + electron
+        run: npm run build
+
+      - name: Build Windows EXE
+        run: npx electron-builder --win --x64 --publish never
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DA-Manager-Windows
+          path: |
+            release/*.exe
+          if-no-files-found: error
+          retention-days: 7
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
+      - name: Build renderer + electron
+        run: npm run build
+
+      - name: Build Linux AppImage
+        run: npx electron-builder --linux AppImage --publish never
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DA-Manager-Linux
+          path: release/*.AppImage
+          if-no-files-found: error
+          retention-days: 7
+
+  update-release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: DA-Manager-Windows
+          path: release-win
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: DA-Manager-Linux
+          path: release-linux
+
+      - name: Normalize legacy asset names
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          mv "release-win/DA Manager-$VERSION-Portable.exe" "release-win/DA.Manager-1.0.0-Portable.exe"
+          mv "release-win/DA Manager-$VERSION-Windows-x64.exe" "release-win/DA.Manager-1.0.0-Windows-x64.exe"
+          mv "release-linux/DA Manager-$VERSION-Linux.AppImage" "release-linux/DA.Manager-1.0.0-Linux.AppImage"
+
+      - name: Replace assets in v1.0.0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload v1.0.0 \
+            release-win/DA.Manager-1.0.0-Portable.exe \
+            release-win/DA.Manager-1.0.0-Windows-x64.exe \
+            release-linux/DA.Manager-1.0.0-Linux.AppImage \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
