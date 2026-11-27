@@ -170,7 +170,7 @@ export default function Login({ onLogin }: Props) {
 
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary animate-in stagger-3"
               style={{
                 width: '100%',
                 justifyContent: 'center',

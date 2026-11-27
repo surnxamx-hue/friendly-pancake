@@ -93,20 +93,21 @@ export default function Dashboard({ session, onLogout }: Props) {
         </div>
 
         <nav style={{ flex: 1, overflowY: 'auto' }}>
-          {navItems.map(item => {
+          {navItems.map((item, index) => {
             const Icon = item.icon
             const active = tab === item.id
             return (
               <button
                 key={item.id}
                 onClick={() => setTab(item.id)}
-                className={`btn btn-ghost ${active ? 'nav-active' : ''}`}
+                className={`btn btn-ghost animate-in ${active ? 'nav-active' : ''}`}
                 style={{
                   width: '100%',
                   justifyContent: 'flex-start',
                   marginBottom: 3,
                   borderRadius: 10,
-                  padding: '11px 14px'
+                  padding: '11px 14px',
+                  animationDelay: `${index * 0.04}s`
                 }}
               >
                 <Icon size={18} />
@@ -143,7 +144,7 @@ export default function Dashboard({ session, onLogout }: Props) {
 
       {/* Main */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <header style={{
+        <header className="animate-fade-down" style={{
           padding: '16px 28px',
           borderBottom: '1px solid rgba(59, 130, 246, 0.12)',
           display: 'flex',
@@ -161,7 +162,7 @@ export default function Dashboard({ session, onLogout }: Props) {
           </button>
         </header>
 
-        <div style={{
+        <div className="animate-slide" style={{
           flex: 1,
           overflow: 'auto',
           padding: 28,

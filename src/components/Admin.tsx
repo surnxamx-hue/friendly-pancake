@@ -210,7 +210,7 @@ export default function Admin({ session }: Props) {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 18, flexWrap: 'wrap' }}>
+      <div className="animate-fade-down" style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 18, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <ShieldCheck size={20} color="#60a5fa" />
           <h3 style={{ fontSize: 17, fontWeight: 600 }}>Admin / Reseller</h3>
@@ -235,7 +235,7 @@ export default function Admin({ session }: Props) {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
-        <div className="card">
+        <div className="card animate-in stagger-1">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
             <Users size={18} color="#60a5fa" />
             <h4 style={{ fontSize: 15, fontWeight: 600 }}>Users</h4>
@@ -273,7 +273,7 @@ export default function Admin({ session }: Props) {
           )}
         </div>
 
-        <div className="card">
+        <div className="card animate-in stagger-2">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
             <Save size={18} color="#60a5fa" />
             <h4 style={{ fontSize: 15, fontWeight: 600 }}>Quota · {selected || '—'}</h4>
@@ -342,7 +342,7 @@ export default function Admin({ session }: Props) {
           )}
         </div>
 
-        <div className="card">
+        <div className="card animate-in stagger-3">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
             <UserPlus size={18} color="#60a5fa" />
             <h4 style={{ fontSize: 15, fontWeight: 600 }}>สร้างผู้ใช้ใหม่</h4>

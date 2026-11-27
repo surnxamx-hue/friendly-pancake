@@ -226,7 +226,7 @@ export default function FileManager() {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="animate-fade-down" style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <button className="btn btn-ghost" onClick={() => setCurrentPath('/')} title="Home">
           <Home size={16} />
         </button>
@@ -271,7 +271,7 @@ export default function FileManager() {
         )}
       </div>
 
-      <div className="card" style={{ padding: '10px 16px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, flexWrap: 'wrap' }}>
+      <div className="card animate-fade-down" style={{ padding: '10px 16px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, flexWrap: 'wrap' }}>
         {breadcrumbs.map((part, index) => {
           const pathToHere = index === 0 ? '/' : '/' + breadcrumbs.slice(1, index + 1).join('/')
           return (
@@ -296,7 +296,7 @@ export default function FileManager() {
       </div>
 
       {(showNewFolder || showNewFile) && (
-        <div className="card" style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div className="card animate-slide" style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center' }}>
           <input
             className="input"
             style={{ flex: 1 }}
@@ -336,7 +336,7 @@ export default function FileManager() {
         </div>
       )}
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="card animate-slide" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: 48, textAlign: 'center' }}>
             <div className="spinner" style={{ margin: '0 auto', width: 28, height: 28 }} />
@@ -402,7 +402,7 @@ export default function FileManager() {
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: 24
         }}>
-          <div className="card" style={{ width: 'min(900px, 95vw)', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+          <div className="card animate-modal" style={{ width: 'min(900px, 95vw)', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
               <h3 style={{ fontSize: 16, fontWeight: 600 }}>Edit · {editTarget}</h3>
               <button className="btn btn-ghost" onClick={() => setEditTarget(null)} style={{ marginLeft: 'auto' }}>

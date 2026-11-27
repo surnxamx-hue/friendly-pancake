@@ -44,7 +44,7 @@ export default function Settings() {
 
   return (
     <div style={{ maxWidth: 480 }}>
-      <div className="card">
+      <div className="card animate-in stagger-1">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
@@ -90,7 +90,7 @@ export default function Settings() {
         </form>
       </div>
 
-      <div className="card" style={{ marginTop: 20 }}>
+      <div className="card animate-in stagger-2" style={{ marginTop: 20 }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Security Tips</h3>
         <ul style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 18, lineHeight: 1.7 }}>
           <li>Use a strong unique password (mix of letters, numbers, symbols)</li>
