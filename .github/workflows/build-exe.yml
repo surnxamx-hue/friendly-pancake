@@ -25,6 +25,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
       - name: Build renderer + electron
         run: npm run build
 
@@ -43,7 +48,7 @@ jobs:
             release/*.exe
             release/*.yml
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 7
 
   build-linux:
     runs-on: ubuntu-latest
@@ -60,6 +65,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint and test
+        run: |
+          npm run lint
+          npm test
+
       - name: Build renderer + electron
         run: npm run build
 
@@ -72,9 +82,9 @@ jobs:
           name: DA-Manager-Linux
           path: release/*.AppImage
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 7
 
-  # สร้าง GitHub Release อัตโนมัติเมื่อ push tag เช่น v1.2.0
+  # สร้าง GitHub Release อัตโนมัติเมื่อ push tag เช่น v1.1.0
   release:
     needs: [build-windows, build-linux]
     runs-on: ubuntu-latest

@@ -1,26 +1,25 @@
 import { useState, useEffect } from 'react'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
-import type { DASession } from './types'
+import type { DALoginPayload, DASession } from './types'
 
 export default function App() {
   const [session, setSession] = useState<DASession | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    window.daApi.getSession().then(s => {
-      setSession(s)
-      setLoading(false)
-    })
+    window.daApi.getSession()
+      .then(setSession)
+      .finally(() => setLoading(false))
   }, [])
 
-  const handleLogin = async (data: { baseUrl: string; username: string; password: string }) => {
-    const result = await window.daApi.login(data)
-    if (result.success) {
-      setSession(data)
-      return true
+  const handleLogin = async (payload: DALoginPayload): Promise<boolean> => {
+    const result = await window.daApi.login(payload)
+    if (!result.success || !result.session) {
+      throw new Error(result.error || 'เข้าสู่ระบบไม่สำเร็จ')
     }
-    return false
+    setSession(result.session)
+    return true
   }
 
   const handleLogout = async () => {
@@ -36,9 +35,7 @@ export default function App() {
     )
   }
 
-  if (!session) {
-    return <Login onLogin={handleLogin} />
-  }
+  if (!session) return <Login onLogin={handleLogin} />
 
   return <Dashboard session={session} onLogout={handleLogout} />
 }

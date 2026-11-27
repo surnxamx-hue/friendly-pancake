@@ -1,12 +1,16 @@
 {
   "name": "da-manager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "DirectAdmin Desktop Manager - Electron App",
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "build:renderer": "vite build",
     "build:electron": "tsc -p tsconfig.electron.json",
     "build": "npm run typecheck && vite build",
@@ -27,22 +31,29 @@
   "author": "Grok",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.0",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
+    "eslint": "^10.15.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.8",
+    "globals": "^17.14.0",
     "typescript": "^5.6.3",
+    "typescript-eslint": "^8.74.0",
     "vite": "^5.4.11",
     "vite-plugin-electron": "^0.28.8",
     "vite-plugin-electron-renderer": "^0.14.6",
+    "vitest": "^2.1.9",
     "wait-on": "^8.0.1"
   },
   "dependencies": {
+    "lucide-react": "^0.460.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "lucide-react": "^0.460.0"
+    "react-dom": "^18.3.1"
   },
   "build": {
     "appId": "com.damanager.app",

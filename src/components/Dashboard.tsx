@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { 
   LayoutDashboard, Globe, Mail, Database, 
   LogOut, RefreshCw, Server, User, FolderOpen,
-  Network, Settings as SettingsIcon
+  Network, Settings as SettingsIcon, Users
 } from 'lucide-react'
 import type { DASession } from '../types'
 import { DA } from '../api'
@@ -14,13 +14,14 @@ import Subdomains from './Subdomains'
 import Ftp from './Ftp'
 import FileManager from './FileManager'
 import Settings from './Settings'
+import Admin from './Admin'
 
 interface Props {
   session: DASession
   onLogout: () => void
 }
 
-type Tab = 'overview' | 'domains' | 'subdomains' | 'emails' | 'databases' | 'ftp' | 'files' | 'settings'
+type Tab = 'overview' | 'domains' | 'subdomains' | 'emails' | 'databases' | 'ftp' | 'files' | 'admin' | 'settings'
 
 export default function Dashboard({ session, onLogout }: Props) {
   const [tab, setTab] = useState<Tab>('overview')
@@ -56,8 +57,9 @@ export default function Dashboard({ session, onLogout }: Props) {
     { id: 'databases' as Tab, label: 'Databases', icon: Database },
     { id: 'ftp' as Tab, label: 'FTP', icon: FolderOpen },
     { id: 'files' as Tab, label: 'File Manager', icon: FolderOpen },
+    { id: 'admin' as Tab, label: 'Admin / Reseller', icon: Users },
     { id: 'settings' as Tab, label: 'Settings', icon: SettingsIcon },
-  ]
+  ].filter(item => item.id !== 'admin' || session.role !== 'user')
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg)' }}>
@@ -86,7 +88,7 @@ export default function Dashboard({ session, onLogout }: Props) {
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: '-0.02em' }}>DA Manager</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>v1.2</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>v1.1.0</div>
           </div>
         </div>
 
@@ -178,6 +180,7 @@ export default function Dashboard({ session, onLogout }: Props) {
               {tab === 'databases' && <Databases />}
               {tab === 'ftp' && <Ftp domains={domainStr} />}
               {tab === 'files' && <FileManager />}
+              {tab === 'admin' && session.role !== 'user' && <Admin session={session} />}
               {tab === 'settings' && <Settings />}
             </>
           )}

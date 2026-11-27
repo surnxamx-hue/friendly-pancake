@@ -1,51 +1,32 @@
-import { useState } from 'react'
-import { Lock, ArrowRight, Server } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
+import { Lock, ArrowRight, Server, ShieldAlert, User, Link2 } from 'lucide-react'
+import type { DALoginPayload } from '../types'
 
 interface Props {
-  onLogin: (data: { baseUrl: string; username: string; password: string }) => Promise<boolean>
+  onLogin: (data: DALoginPayload) => Promise<boolean>
 }
 
-const HIDDEN_BASE_URL = 'https://122.154.34.166:2222'
-const HIDDEN_USERNAME = 'freehost2611014'
+const DEFAULT_BASE_URL = 'https://122.154.34.166:2222'
+const DEFAULT_USERNAME = 'freehost2611014'
 
 export default function Login({ onLogin }: Props) {
+  const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL)
+  const [username, setUsername] = useState(DEFAULT_USERNAME)
   const [password, setPassword] = useState('')
+  const [allowSelfSigned, setAllowSelfSigned] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      await window.daApi.login({
-        baseUrl: HIDDEN_BASE_URL,
-        username: HIDDEN_USERNAME,
-        password
-      })
-
-      const result = await window.daApi.request({
-        command: 'CMD_API_SHOW_USER_CONFIG',
-        method: 'GET'
-      })
-
-      if (result.error) {
-        setError(result.message || 'รหัสผ่านไม่ถูกต้อง')
-        await window.daApi.logout()
-        setLoading(false)
-        return
-      }
-
-      const success = await onLogin({
-        baseUrl: HIDDEN_BASE_URL,
-        username: HIDDEN_USERNAME,
-        password
-      })
-
-      if (!success) setError('ไม่สามารถเข้าสู่ระบบได้')
+      const success = await onLogin({ baseUrl, username, password, allowSelfSigned })
+      if (!success) setError('เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบข้อมูล')
     } catch (err: any) {
-      setError(err.message || 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้')
+      setError(err?.message || 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้')
     } finally {
       setLoading(false)
     }
@@ -58,36 +39,11 @@ export default function Login({ onLogin }: Props) {
       alignItems: 'center',
       justifyContent: 'center',
       background: 'radial-gradient(ellipse 80% 60% at 50% 0%, #0c1a38 0%, #050b18 40%, #01040f 100%)',
-      position: 'relative',
-      overflow: 'hidden'
+      overflow: 'auto',
+      padding: 24
     }}>
-      {/* animated glow orbs */}
-      <div style={{
-        position: 'absolute',
-        width: 520,
-        height: 520,
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 68%)',
-        top: '42%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        animation: 'glowPulse 4s ease-in-out infinite',
-        pointerEvents: 'none'
-      }} />
-      <div style={{
-        position: 'absolute',
-        width: 280,
-        height: 280,
-        borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
-        top: '20%',
-        right: '15%',
-        animation: 'softFloat 7s ease-in-out infinite',
-        pointerEvents: 'none'
-      }} />
-
-      <div className="animate-scale" style={{ width: 380, position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+      <div className="animate-scale" style={{ width: 420, position: 'relative' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
             width: 76,
             height: 76,
@@ -97,8 +53,7 @@ export default function Login({ onLogin }: Props) {
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 20px',
-            boxShadow: '0 14px 44px rgba(37, 99, 235, 0.45)',
-            animation: 'softFloat 5s ease-in-out infinite'
+            boxShadow: '0 14px 44px rgba(37, 99, 235, 0.45)'
           }}>
             <Server size={36} color="white" strokeWidth={1.7} />
           </div>
@@ -106,12 +61,12 @@ export default function Login({ onLogin }: Props) {
             DA Manager
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
-            ใส่รหัสผ่านเพื่อเข้าสู่ระบบ
+            เข้าสู่ระบบ DirectAdmin (User / Reseller / Admin)
           </p>
         </div>
 
         <div className="animate-in stagger-2" style={{
-          background: 'linear-gradient(160deg, rgba(12, 22, 42, 0.9) 0%, rgba(6, 12, 26, 0.95) 100%)',
+          background: 'linear-gradient(160deg, rgba(12, 22, 42, 0.94) 0%, rgba(6, 12, 26, 0.97) 100%)',
           backdropFilter: 'blur(16px)',
           border: '1px solid rgba(59, 130, 246, 0.2)',
           borderRadius: 18,
@@ -119,27 +74,87 @@ export default function Login({ onLogin }: Props) {
           boxShadow: '0 24px 64px rgba(0,0,0,0.55), 0 0 40px rgba(37,99,235,0.1)'
         }}>
           <form onSubmit={handleSubmit}>
-            <label className="label">รหัสผ่าน</label>
-            <div style={{ position: 'relative', marginBottom: 20 }}>
-              <Lock size={16} style={{
-                position: 'absolute', left: 14, top: '50%',
-                transform: 'translateY(-50%)', color: 'var(--text-muted)'
-              }} />
-              <input
-                className="input"
-                style={{ paddingLeft: 42, height: 50, fontSize: 15, borderRadius: 12 }}
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                autoFocus
-                required
-                autoComplete="current-password"
-              />
+            <div style={{ marginBottom: 16 }}>
+              <label className="label">DirectAdmin URL</label>
+              <div style={{ position: 'relative' }}>
+                <Link2 size={16} style={{
+                  position: 'absolute', left: 14, top: '50%',
+                  transform: 'translateY(-50%)', color: 'var(--text-muted)'
+                }} />
+                <input
+                  className="input"
+                  style={{ paddingLeft: 42, height: 46 }}
+                  type="url"
+                  value={baseUrl}
+                  onChange={event => setBaseUrl(event.target.value)}
+                  placeholder="https://your-server:2222"
+                  required
+                  autoComplete="url"
+                />
+              </div>
             </div>
 
+            <div style={{ marginBottom: 16 }}>
+              <label className="label">Username</label>
+              <div style={{ position: 'relative' }}>
+                <User size={16} style={{
+                  position: 'absolute', left: 14, top: '50%',
+                  transform: 'translateY(-50%)', color: 'var(--text-muted)'
+                }} />
+                <input
+                  className="input"
+                  style={{ paddingLeft: 42, height: 46 }}
+                  value={username}
+                  onChange={event => setUsername(event.target.value)}
+                  placeholder="username"
+                  required
+                  autoComplete="username"
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label className="label">Password</label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={16} style={{
+                  position: 'absolute', left: 14, top: '50%',
+                  transform: 'translateY(-50%)', color: 'var(--text-muted)'
+                }} />
+                <input
+                  className="input"
+                  style={{ paddingLeft: 42, height: 46 }}
+                  type="password"
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
+                  placeholder="••••••••••••"
+                  required
+                  autoFocus
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
+
+            <label style={{
+              display: 'flex', alignItems: 'flex-start', gap: 10,
+              fontSize: 12, color: 'var(--text-muted)',
+              background: 'rgba(245, 158, 11, 0.07)',
+              border: '1px solid rgba(245, 158, 11, 0.2)',
+              padding: 11, borderRadius: 10, marginBottom: 18, cursor: 'pointer'
+            }}>
+              <input
+                type="checkbox"
+                checked={allowSelfSigned}
+                onChange={event => setAllowSelfSigned(event.target.checked)}
+                style={{ marginTop: 2 }}
+              />
+              <span>
+                <ShieldAlert size={13} style={{ verticalAlign: -2, marginRight: 4 }} />
+                ยอมรับใบรับรองที่เซิร์ฟเวอร์-sign เอง (เฉพาะเซิร์ฟเวอร์ที่คุณเชื่อใจเท่านั้น)
+              </span>
+            </label>
+
             {error && (
-              <div className="animate-in" style={{
+              <div style={{
                 background: 'rgba(239, 68, 68, 0.1)',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
                 color: '#f87171',
@@ -159,12 +174,12 @@ export default function Login({ onLogin }: Props) {
               style={{
                 width: '100%',
                 justifyContent: 'center',
-                height: 50,
+                height: 48,
                 borderRadius: 12,
                 fontSize: 15,
                 fontWeight: 600
               }}
-              disabled={loading || !password}
+              disabled={loading || !password || !username || !baseUrl}
             >
               {loading ? <div className="spinner" /> : (
                 <>เข้าสู่ระบบ <ArrowRight size={18} /></>
@@ -173,11 +188,11 @@ export default function Login({ onLogin }: Props) {
           </form>
         </div>
 
-        <p className="animate-in stagger-4" style={{
-          textAlign: 'center', marginTop: 28, fontSize: 12,
-          color: 'var(--text-muted)', opacity: 0.6
+        <p style={{
+          textAlign: 'center', marginTop: 24, fontSize: 12,
+          color: 'var(--text-muted)', opacity: 0.65
         }}>
-          เชื่อมต่อกับ DirectAdmin โดยอัตโนมัติ
+          รหัสผ่านจะถูกเก็บในหน่วยความจำเฉพาะขณะเปิดแอปเท่านั้น
         </p>
       </div>
     </div>
